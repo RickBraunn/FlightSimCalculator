@@ -139,5 +139,30 @@ main .result {
     opacity: 1;
   }
 }
+.app-footer {
+  background-color: #f8f9fa;
+  color: #343a40;
+  text-align: center;
+  padding: 20px 0;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  font-size: 14px;
+  border-top: 1px solid #ddd;
+}
+.app-footer p {
+  margin-bottom: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+.app-footer a {
+  text-decoration: none;
+  color: #007bff;
+  transition: color 0.3s;
+}
+.app-footer a:hover {
+  color: #0056b3;
+}
 
 /*# sourceMappingURL=styles.css.map */

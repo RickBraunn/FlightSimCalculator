@@ -170,3 +170,32 @@ main {
         opacity: 1;
     }
 } 
+
+.app-footer {
+    background-color: #f8f9fa; // Light background color
+    color: #343a40; // Dark text color
+    text-align: center; // Centered text
+    padding: 20px 0; // Increased padding for better spacing
+    position: relative; // Positioning
+    bottom: 0; // Stick to the bottom
+    width: 100%; // Full width
+    font-size: 14px; // Font size
+    border-top: 1px solid #ddd; // Add a top border for separation
+
+    p {
+        margin-bottom: 0; // Remove margin bottom
+        font-size: 16px; // Increase font size
+        font-weight: bold; // Make font bold
+        color: #333; // Darken the text color
+    }
+
+    a {
+        text-decoration: none; // Remove underline
+        color: #007bff; // Blue link color
+        transition: color 0.3s; // Add transition effect
+
+        &:hover {
+            color: #0056b3; // Darken the link color on hover
+        }
+    }
+}
