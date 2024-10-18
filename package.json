@@ -1,5 +1,15 @@
 {
-  "dependencies": {
+  "name": "flightsimcalculator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
     "sass": "^1.80.2"
-  }
+  },
+  "scripts": {
+    "compile:sass": "sass sass/main.scss src/styles.css -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
