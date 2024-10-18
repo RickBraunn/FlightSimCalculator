@@ -1,29 +1,23 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const modal = document.getElementById("disclaimer-modal");
-    const closeButton = document.querySelector(".close-button");
-    const closeModalButton = document.getElementById("close-modal-button"); // Select the new close button
-
-    // Show the modal when the page loads
-    modal.style.display = "block";
-
-    // Close the modal when the close button is clicked
-    closeButton.addEventListener("click", function() {
-        modal.style.display = "none";
-    });
-
-    // Close the modal when the new close button is clicked
-    closeModalButton.addEventListener("click", function() {
-        modal.style.display = "none";
-    });
-
-    // Close the modal when clicking outside of the modal content
-    window.addEventListener("click", function(event) {
-        if (event.target === modal) {
-            modal.style.display = "none";
-        }
-    });
+document.addEventListener('DOMContentLoaded', function() {
+    // Show the custom alert when the page loads
+    showDisclaimerAlert();
 });
 
+function showDisclaimerAlert() {
+    const alertBox = document.getElementById('custom-alert');
+    const alertMessage = document.getElementById('alert-message');
+    alertMessage.innerText = "Disclaimer: This fuel calculator is designed exclusively for flight simulation purposes. It is not intended for actual flight planning or navigation. Please consult official resources and professionals for real-world flight operations.";
+    
+    alertBox.style.display = "flex"; // Show the modal
+}
+
+// Close the alert box when the user clicks the close button or the OK button
+document.querySelector('.close-btn').addEventListener('click', closeAlert);
+document.getElementById('ok-btn').addEventListener('click', closeAlert);
+
+function closeAlert() {
+    document.getElementById('custom-alert').style.display = "none"; // Hide the modal
+}
 // Function to calculate the total fuel required for a trip
 function calculateFuel() {
     // Get input values from the form and parse them as floating-point numbers
