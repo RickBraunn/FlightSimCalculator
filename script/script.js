@@ -1,3 +1,29 @@
+document.addEventListener("DOMContentLoaded", function() {
+    const modal = document.getElementById("disclaimer-modal");
+    const closeButton = document.querySelector(".close-button");
+    const closeModalButton = document.getElementById("close-modal-button"); // Select the new close button
+
+    // Show the modal when the page loads
+    modal.style.display = "block";
+
+    // Close the modal when the close button is clicked
+    closeButton.addEventListener("click", function() {
+        modal.style.display = "none";
+    });
+
+    // Close the modal when the new close button is clicked
+    closeModalButton.addEventListener("click", function() {
+        modal.style.display = "none";
+    });
+
+    // Close the modal when clicking outside of the modal content
+    window.addEventListener("click", function(event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+});
+
 // Function to calculate the total fuel required for a trip
 function calculateFuel() {
     // Get input values from the form and parse them as floating-point numbers
