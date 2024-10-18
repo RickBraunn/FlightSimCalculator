@@ -60,3 +60,34 @@ document.getElementById('fuel-calculator').addEventListener('submit', function(e
     event.preventDefault(); // Prevent the default form submission behavior
     calculateFuel(); // Call the calculateFuel function
 });
+
+// Get the modal elements
+var modal = document.getElementById('custom-alert');
+var learnMoreText = document.getElementById('learn-more');
+var closeButton = document.querySelector('.close-btn');
+var okButton = document.getElementById('ok-btn');
+
+// Function to show the modal
+function showModal(message) {
+    var alertMessage = document.getElementById('alert-message');
+    alertMessage.innerText = message;
+    modal.style.display = 'block';
+}
+
+// Function to hide the modal
+function hideModal() {
+    modal.style.display = 'none';
+}
+
+// Add event listeners to the learn more text and buttons
+learnMoreText.addEventListener('click', function() {
+    showModal('This calculator currently uses 5% fuel for contingency and 45 minutes for final reserve. In the future, it will match the FAA fuel requirements.');
+});
+
+closeButton.addEventListener('click', hideModal);
+okButton.addEventListener('click', hideModal);
+
+// Show the "Flight Simulator Only" message when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    showModal('Disclaimer: This fuel calculator is designed exclusively for flight simulation purposes. It is not intended for actual flight planning or navigation. Please consult official resources and professionals for real-world flight operations.');
+});

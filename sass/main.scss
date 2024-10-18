@@ -110,6 +110,7 @@ main {
 
     .modal-content {
         background: $modal-content-bg;
+        margin: 15% auto; // 15% from the top and centered
         padding: 30px;
         border-radius: 15px;
         box-shadow: 0 10px 30px $shadow-color;
@@ -198,4 +199,20 @@ main {
             color: #0056b3; // Darken the link color on hover
         }
     }
+}
+
+.learn-more-text {
+    font-size: 1rem; // Keep the font size for readability
+    color: #333; // Set text color to black or dark gray
+    cursor: default; // Change cursor to default to indicate it's not a link
+    margin: 10px 0; // Add some margin for spacing
+    padding: 5px; // Add padding for better spacing
+    border-radius: 5px; // Rounded corners for a softer look
+    transition: background-color 0.3s; // Smooth transition for hover effects
+    text-align: left; // Align text to the left
+    display: block; // Ensure it takes full width for alignment
+
+    // Remove underline and hover effects
+    text-decoration: none; // No underline
+  
 }
