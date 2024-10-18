@@ -1,70 +1,100 @@
-$primary-color: #3498db;
-$secondary-color: #f1c40f;
-
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
-.calculator-container {
-    max-width: 400px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-    color: $primary-color;
-    margin-bottom: 20px;
-}
-
-.input-group {
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-bottom: 10px;
-}
-
-input[type="number"] {
-    width: 100%;
-    height: 40px;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-}
-
-button[type="submit"] {
-    width: 100%;
-    height: 40px;
-    background-color: $primary-color;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-}
-
-button[type="submit"]:hover {
-    background-color: $secondary-color;
-}
-
-#result {
-    margin-top: 20px;
-    font-size: 18px;
-    font-weight: bold;
-}
-
+// Color Variables
+$primary-color: #007BFF;
+$secondary-color: #f0f0f0;
+$background-color: #f9f9f9;
+$text-color: #333;
 $modal-bg: rgba(0, 0, 0, 0.8);
 $modal-content-bg: linear-gradient(145deg, #ffffff, #f0f0f0);
-$button-bg: #007BFF;
-$button-hover-bg: #0056b3;
-$close-btn-color: #333;
-$close-btn-hover-color: #FF0000;
 $shadow-color: rgba(0, 0, 0, 0.2);
+$close-btn-color: #333; // Define the close button color
+$close-btn-hover-color: #FF0000; // Define the hover color for the close button
 
+// Global Styles
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: $background-color;
+    color: $text-color;
+}
+
+.app-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px $shadow-color;
+    background-color: white;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+
+    h1 {
+        font-size: 2.5rem;
+        color: $primary-color;
+    }
+}
+
+main {
+    .calculator-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+
+            label {
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+
+            input {
+                padding: 10px;
+                border: 1px solid $shadow-color;
+                border-radius: 5px;
+                font-size: 1rem;
+                transition: border-color 0.3s;
+
+                &:focus {
+                    border-color: $primary-color;
+                    outline: none;
+                }
+            }
+        }
+
+        .calculate-btn {
+            padding: 12px;
+            background-color: $primary-color;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s, transform 0.2s;
+
+            &:hover {
+                background-color: darken($primary-color, 10%);
+                transform: scale(1.05);
+            }
+        }
+    }
+
+    .result {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid $shadow-color;
+        border-radius: 5px;
+        background-color: $secondary-color;
+        font-size: 1.2rem;
+        text-align: center;
+    }
+}
+
+// Modal Styles
 .modal {
     display: flex;
     justify-content: center;
@@ -94,7 +124,7 @@ $shadow-color: rgba(0, 0, 0, 0.2);
         p {
             margin: 0 0 20px;
             font-size: 18px;
-            color: #333;
+            color: $text-color;
             line-height: 1.5;
         }
 
@@ -114,7 +144,7 @@ $shadow-color: rgba(0, 0, 0, 0.2);
 
         #ok-btn {
             padding: 12px 25px;
-            background-color: $button-bg;
+            background-color: $primary-color;
             color: white;
             border: none;
             border-radius: 5px;
@@ -123,9 +153,9 @@ $shadow-color: rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
 
             &:hover {
-                background-color: $button-hover-bg;
+                background-color: darken($primary-color, 10%);
                 transform: scale(1.05);
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                box-shadow: 0 5px 15px $shadow-color;
             }
         }
     }
@@ -139,4 +169,4 @@ $shadow-color: rgba(0, 0, 0, 0.2);
     to {
         opacity: 1;
     }
-}
+} 
