@@ -1,63 +1,88 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from tkinter.font import Font
+from PIL import Image, ImageTk
+import os
 
 class FuelCalculatorApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Fuel Calculator")
-        self.geometry("500x600")
-        self.configure(bg="#f9f9f9")
+        self.state('zoomed')  # Maximize window on start
+        self.configure(bg="#1E2A38")  # Dark aviation blue background
+        from tkinter.font import Font
+        self.custom_font = Font(family="Segoe UI", size=12)
+        self.header_font = Font(family="Segoe UI", size=28, weight="bold")
+        self.result_font = Font(family="Segoe UI", size=14, weight="bold")
         self.create_widgets()
         self.show_disclaimer()
 
     def create_widgets(self):
         # Main container frame
-        container = tk.Frame(self, bg="white", padx=20, pady=20)
-        container.pack(fill="both", expand=True, padx=20, pady=20)
+        container = ttk.Frame(self, padding=20)
+        container.pack(fill="both", expand=True)
+        container.configure(style="Container.TFrame")
 
-        # Header
-        header = tk.Label(container, text="Fuel Calculator", font=("Arial", 24), fg="#007BFF", bg="white")
-        header.pack(pady=(0, 10))
+        # Header with icon and text
+        header_frame = ttk.Frame(container)
+        header_frame.grid(row=0, column=0, columnspan=4, pady=(0, 15), sticky="w")
 
-        # Learn more label
-        learn_more = tk.Label(container, text="*learn more", fg="#333", bg="white", cursor="hand2")
-        learn_more.pack(anchor="w")
+        # Load airplane icon
+        import os
+        from PIL import Image, ImageTk
+        icon_path = os.path.join(os.path.dirname(__file__), "airplane_icon.png")
+        try:
+            icon_image = Image.open(icon_path)
+            icon_image = icon_image.resize((40, 40), Image.ANTIALIAS)
+            self.airplane_icon = ImageTk.PhotoImage(icon_image)
+        except Exception:
+            self.airplane_icon = None
+
+        if self.airplane_icon:
+            icon_label = ttk.Label(header_frame, image=self.airplane_icon)
+            icon_label.pack(side="left", padx=(0, 10))
+
+        header = ttk.Label(header_frame, text="Fuel Calculator", font=self.header_font, foreground="#00A3E0")
+        header.pack(side="left")
+
+        # Learn more link
+        learn_more = ttk.Label(container, text="*learn more", foreground="#A0A0A0", cursor="hand2", font=self.custom_font)
+        learn_more.grid(row=1, column=0, columnspan=4, sticky="w")
         learn_more.bind("<Button-1>", lambda e: self.show_info())
 
         # Fuel mode selection
-        fuel_mode_frame = tk.Frame(container, bg="white")
-        fuel_mode_frame.pack(fill="x", pady=10)
-        tk.Label(fuel_mode_frame, text="Select Fuel Calculation Mode:", bg="white", font=("Arial", 10, "bold")).pack(anchor="w")
-        self.fuel_mode_var = tk.StringVar(value="faa")
-        fuel_mode_dropdown = ttk.Combobox(fuel_mode_frame, textvariable=self.fuel_mode_var, state="readonly",
-                                          values=["faa", "custom"])
-        fuel_mode_dropdown.pack(fill="x")
-        fuel_mode_dropdown.bind("<<ComboboxSelected>>", lambda e: self.toggle_inputs())
+        ttk.Label(container, text="Select Fuel Calculation Mode:", font=self.custom_font, foreground="#FFFFFF").grid(row=2, column=0, sticky="w", pady=(15, 5))
+        self.fuel_mode_var = tk.StringVar(value="FAA Fuel Requirements")
+        self.fuel_mode_dropdown = ttk.Combobox(container, textvariable=self.fuel_mode_var, state="readonly", values=["FAA Fuel Requirements", "Custom Fuel"], font=self.custom_font)
+        self.fuel_mode_dropdown.grid(row=3, column=0, columnspan=4, sticky="ew")
+        self.fuel_mode_dropdown.bind("<<ComboboxSelected>>", lambda e: self.update_mode())
 
         # Custom inputs frame
-        self.custom_inputs_frame = tk.Frame(container, bg="white")
-        self.custom_inputs_frame.pack(fill="x", pady=10)
+        custom_frame = ttk.LabelFrame(container, text="Custom Inputs", style="Custom.TLabelframe")
+        custom_frame.grid(row=4, column=0, columnspan=4, sticky="ew", pady=15)
 
-        tk.Label(self.custom_inputs_frame, text="Contingency (%):", bg="white").grid(row=0, column=0, sticky="w")
+        ttk.Label(custom_frame, text="Contingency (%):", font=self.custom_font).grid(row=0, column=0, sticky="w", padx=5, pady=5)
         self.contingency_var = tk.DoubleVar(value=5.0)
-        tk.Entry(self.custom_inputs_frame, textvariable=self.contingency_var, width=10).grid(row=0, column=1, sticky="w", padx=5)
+        self.contingency_entry = ttk.Entry(custom_frame, textvariable=self.contingency_var, width=15, font=self.custom_font)
+        self.contingency_entry.grid(row=0, column=1, sticky="w", padx=5, pady=5)
 
-        tk.Label(self.custom_inputs_frame, text="Reserve Minutes:", bg="white").grid(row=0, column=2, sticky="w", padx=(20,0))
+        ttk.Label(custom_frame, text="Reserve Minutes:", font=self.custom_font).grid(row=0, column=2, sticky="w", padx=5, pady=5)
         self.reserve_minutes_var = tk.IntVar(value=45)
-        tk.Entry(self.custom_inputs_frame, textvariable=self.reserve_minutes_var, width=10).grid(row=0, column=3, sticky="w", padx=5)
+        self.reserve_entry = ttk.Entry(custom_frame, textvariable=self.reserve_minutes_var, width=15, font=self.custom_font)
+        self.reserve_entry.grid(row=0, column=3, sticky="w", padx=5, pady=5)
 
-        # Flight type frame
-        self.flight_type_frame = tk.Frame(container, bg="white")
-        self.flight_type_frame.pack(fill="x", pady=10)
-        tk.Label(self.flight_type_frame, text="Select Flight Type:", bg="white").pack(anchor="w")
-        self.flight_type_var = tk.StringVar(value="VFR")
-        flight_type_dropdown = ttk.Combobox(self.flight_type_frame, textvariable=self.flight_type_var, state="readonly",
-                                            values=["VFR", "IFR"])
-        flight_type_dropdown.pack(fill="x")
+        # Flight type selection
+        flight_type_frame = ttk.LabelFrame(container, text="Flight Type")
+        flight_type_frame.grid(row=5, column=0, columnspan=4, sticky="ew", pady=10)
 
-        # Input fields
-        self.inputs_frame = tk.Frame(container, bg="white")
-        self.inputs_frame.pack(fill="x", pady=10)
+        ttk.Label(flight_type_frame, text="Select Flight Type:").grid(row=0, column=0, sticky="w", padx=5, pady=5)
+        self.flight_type_var = tk.StringVar(value="Select Flight Rule")
+        self.flight_type_dropdown = ttk.Combobox(flight_type_frame, textvariable=self.flight_type_var, state="readonly", values=["Select Flight Rule", "VFR", "IFR"])
+        self.flight_type_dropdown.grid(row=0, column=1, sticky="ew", padx=5, pady=5)
+
+        # Flight parameters frame
+        params_frame = ttk.LabelFrame(container, text="Flight Parameters")
+        params_frame.grid(row=6, column=0, columnspan=4, sticky="ew", pady=10)
 
         labels = [
             "A to B distance (nm):",
@@ -68,22 +93,29 @@ class FuelCalculatorApp(tk.Tk):
         ]
         self.input_vars = []
         for i, label_text in enumerate(labels):
-            tk.Label(self.inputs_frame, text=label_text, bg="white").grid(row=i, column=0, sticky="w", pady=5)
-            var = tk.DoubleVar()
-            entry = tk.Entry(self.inputs_frame, textvariable=var)
-            entry.grid(row=i, column=1, sticky="w", pady=5, padx=5)
+            ttk.Label(params_frame, text=label_text).grid(row=i, column=0, sticky="w", padx=5, pady=5)
+            var = tk.StringVar(value="")
+            entry = ttk.Entry(params_frame, textvariable=var)
+            entry.grid(row=i, column=1, sticky="ew", padx=5, pady=5)
             self.input_vars.append(var)
 
+        # Configure grid weights for params_frame
+        params_frame.columnconfigure(1, weight=1)
+
         # Calculate button
-        calc_button = tk.Button(container, text="Calculate Fuel", bg="#007BFF", fg="white", font=("Arial", 12, "bold"),
-                                command=self.calculate_fuel)
-        calc_button.pack(pady=15, fill="x")
+        self.calc_button = ttk.Button(container, text="Calculate Fuel", command=self.calculate_fuel, style="Calc.TButton")
+        self.calc_button.grid(row=7, column=0, columnspan=4, sticky="ew", pady=20)
 
         # Result label
-        self.result_label = tk.Label(container, text="", bg="white", font=("Arial", 14), relief="solid", bd=1, padx=10, pady=10)
-        self.result_label.pack(fill="x")
+        self.result_label = ttk.Label(container, text="", background="#FFFFFF", font=self.result_font, relief="solid", padding=10)
+        self.result_label.grid(row=8, column=0, columnspan=4, sticky="ew")
 
-        self.toggle_inputs()
+        # Initialize mode states
+        self.update_mode()
+        # Add forced multiple update_mode calls to fix UI glitch
+        self.after(100, self.update_mode)
+        self.after(300, self.update_mode)
+        self.after(500, self.update_mode)
 
     def show_disclaimer(self):
         messagebox.showinfo("Disclaimer", "This fuel calculator is designed exclusively for flight simulation purposes. "
@@ -94,32 +126,36 @@ class FuelCalculatorApp(tk.Tk):
         messagebox.showinfo("Info", "This calculator currently uses 5% fuel for contingency and 45 minutes for final reserve. "
                                     "In the future, it will match the FAA fuel requirements.")
 
-    def toggle_inputs(self):
+    def update_mode(self):
         mode = self.fuel_mode_var.get()
-        if mode == "custom":
-            self.custom_inputs_frame.pack(fill="x", pady=10)
-            self.flight_type_frame.pack_forget()
-        elif mode == "faa":
-            self.custom_inputs_frame.pack_forget()
-            self.flight_type_frame.pack(fill="x", pady=10)
+        if mode == "Custom Fuel":
+            self.contingency_entry.config(state="normal")
+            self.reserve_entry.config(state="normal")
+            self.flight_type_dropdown.config(state="disabled")
+        elif mode == "FAA Fuel Requirements":
+            self.contingency_entry.config(state="disabled")
+            self.reserve_entry.config(state="disabled")
+            self.flight_type_dropdown.config(state="readonly")
         else:
-            self.custom_inputs_frame.pack_forget()
-            self.flight_type_frame.pack_forget()
+            self.contingency_entry.config(state="disabled")
+            self.reserve_entry.config(state="disabled")
+            self.flight_type_dropdown.config(state="disabled")
 
     def calculate_fuel(self):
         try:
-            distance_ab = self.input_vars[0].get()
-            distance_bc = self.input_vars[1].get()
-            cruise_speed = self.input_vars[2].get()
-            fuel_consumption = self.input_vars[3].get()
-            headwind = self.input_vars[4].get()
+            distance_ab = float(self.input_vars[0].get())
+            distance_bc = float(self.input_vars[1].get())
+            cruise_speed = float(self.input_vars[2].get())
+            fuel_consumption = float(self.input_vars[3].get())
+            headwind = float(self.input_vars[4].get())
 
-            if distance_ab < 0 or distance_bc < 0 or cruise_speed <= 0 or fuel_consumption <= 0 or headwind < 0:
+            # Validate inputs
+            if any(val < 0 for val in [distance_ab, distance_bc, headwind]) or cruise_speed <= 0 or fuel_consumption <= 0:
                 self.result_label.config(text="Please enter valid positive numbers for all inputs.")
                 return
 
             mode = self.fuel_mode_var.get()
-            if mode == "custom":
+            if mode.lower() == "custom":
                 contingency_percent = self.contingency_var.get()
                 reserve_minutes = self.reserve_minutes_var.get()
                 if contingency_percent < 0 or reserve_minutes < 0:
@@ -142,12 +178,12 @@ class FuelCalculatorApp(tk.Tk):
             total_trip_fuel = 0
             reserve_fuel = 0
 
-            if mode == "custom":
+            if mode.lower() == "custom":
                 total_fuel_ab = calculate_leg_fuel(distance_ab, speed, fuel_consumption, contingency_percent)
                 total_fuel_bc = calculate_leg_fuel(distance_bc, speed, fuel_consumption, contingency_percent)
                 total_trip_fuel = total_fuel_ab + total_fuel_bc
                 reserve_fuel = (reserve_minutes / 60) * fuel_consumption
-            elif mode == "faa":
+            elif mode.lower() == "faa fuel requirements":
                 flight_type = self.flight_type_var.get()
                 if flight_type == "IFR":
                     trip_fuel_ab = calculate_leg_fuel(distance_ab, speed, fuel_consumption, 0)
@@ -171,7 +207,7 @@ class FuelCalculatorApp(tk.Tk):
             total_fuel_required = total_trip_fuel + reserve_fuel
             self.result_label.config(text=f"Total Fuel Required: {total_fuel_required:.2f} gallons")
 
-        except tk.TclError:
+        except ValueError:
             self.result_label.config(text="Please enter valid numbers in all fields.")
 
 if __name__ == "__main__":
