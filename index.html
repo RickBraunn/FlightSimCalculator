@@ -1,57 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Fuel Calculator</title>
-    <link rel="stylesheet" href="src/styles.css">
+    <link rel="stylesheet" href="src/styles.css" />
 </head>
 <body>
     <div class="app-container">
         <header>
             <h1>Fuel Calculator</h1>
-         
-                <p class="learn-more-text" id="learn-more">*learn more</p>
-           
+            <p class="learn-more-text" id="learn-more">*learn more</p>
         </header>
         <main>
             <form id="fuel-calculator" class="calculator-form">
+                <div class="input-group" id="fuel-mode-group">
+                    <label for="fuel-mode">Select Fuel Calculation Mode:</label>
+                    <select id="fuel-mode" name="fuel-mode">
+                        <option value="faa" selected>FAA Fuel Requirements</option>
+                        <option value="custom">Custom Fuel</option>
+                    </select>
+                </div>
+
+                <div id="custom-inputs" class="input-group" style="display: block;">
+                    <label for="contingency">Contingency (%):</label>
+                    <input
+                        type="number"
+                        id="contingency"
+                        name="contingency"
+                        min="0"
+                        max="100"
+                        value="5"
+                        step="0.1"
+                        style="width: 60px; margin-right: 1em"
+                    />
+                    <label for="reserve-minutes">Reserve Minutes:</label>
+                    <input
+                        type="number"
+                        id="reserve-minutes"
+                        name="reserve-minutes"
+                        min="0"
+                        value="45"
+                        step="1"
+                        style="width: 60px"
+                    />
+                </div>
+
+                <div id="flight-type-div" class="input-group" style="display: none;">
+                    <label for="flight-type">Select Flight Type:</label>
+                    <select id="flight-type" name="flight-type">
+                        <option value="VFR">VFR</option>
+                        <option value="IFR">IFR</option>
+                    </select>
+                </div>
+
                 <div class="input-group">
                     <label for="distance-ab">A to B distance (nm)</label>
-                    <input type="number" id="distance-ab" required>
+                    <input type="number" id="distance-ab" required />
                 </div>
                 <div class="input-group">
                     <label for="distance-bc">B to C distance (nm)</label>
-                    <input type="number" id="distance-bc" required>
+                    <input type="number" id="distance-bc" required />
                 </div>
                 <div class="input-group">
                     <label for="cruise-speed">Average cruise speed (kts)</label>
-                    <input type="number" id="cruise-speed" required>
+                    <input type="number" id="cruise-speed" required />
                 </div>
                 <div class="input-group">
                     <label for="fuel-consumption">Average fuel consumption (usg/hr)</label>
-                    <input type="number" id="fuel-consumption" required>
+                    <input type="number" id="fuel-consumption" required />
                 </div>
                 <div class="input-group">
                     <label for="headwind">Average headwind (kts)</label>
-                    <input type="number" id="headwind" required>
+                    <input type="number" id="headwind" required />
                 </div>
+
                 <button type="submit" class="calculate-btn">Calculate Fuel</button>
             </form>
             <div id="result" class="result"></div>
         </main>
     </div>
-    
-    <div id="custom-alert" class="modal" style="display:none;">
+
+    <div id="custom-alert" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <p id="alert-message">This calculator currently uses 5% fuel for contingency and 45 minutes for final reserve. In the future, it will match the FAA fuel requirements.</p>
+            <p id="alert-message">
+                This calculator currently uses 5% fuel for contingency and 45 minutes for final reserve. In the future, it will match the FAA fuel requirements.
+            </p>
             <button id="ok-btn">OK</button>
         </div>
     </div>
 
     <footer class="app-footer">
-        <p>&copy; 2024 Fuel Calculator. All rights reserved. Licensed under <a href="https://github.com/RickBraunn/FlightSimCalculator?tab=MIT-1-ov-file#readme">MIT License</a>.</p>
+        <p>
+            &copy; 2024 Fuel Calculator. All rights reserved. Licensed under
+            <a href="https://github.com/RickBraunn/FlightSimCalculator?tab=MIT-1-ov-file#readme">MIT License</a>.
+        </p>
     </footer>
 
     <script src="script/script.js"></script>

@@ -179,4 +179,26 @@ main .result {
   text-decoration: none;
 }
 
+/* Style for select dropdowns to match input fields */
+select {
+  padding: 10px;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  font-family: inherit;
+  box-sizing: border-box;
+  width: 100%;
+  transition: border-color 0.3s;
+}
+
+select:focus {
+  border-color: #007BFF;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
 /*# sourceMappingURL=styles.css.map */
