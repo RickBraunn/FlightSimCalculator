@@ -87,6 +87,7 @@ class FuelCalculatorApp(tk.Tk):
         labels = [
             "A to B distance (nm):",
             "B to C distance (nm):",
+            "Taxi time (minutes):",
             "Average cruise speed (kts):",
             "Average fuel consumption (usg/hr):",
             "Average headwind (kts):"
@@ -94,7 +95,7 @@ class FuelCalculatorApp(tk.Tk):
         self.input_vars = []
         for i, label_text in enumerate(labels):
             ttk.Label(params_frame, text=label_text).grid(row=i, column=0, sticky="w", padx=5, pady=5)
-            var = tk.StringVar(value="")
+            var = tk.StringVar(value="0" if label_text == "Taxi time (minutes):" else "")
             entry = ttk.Entry(params_frame, textvariable=var)
             entry.grid(row=i, column=1, sticky="ew", padx=5, pady=5)
             self.input_vars.append(var)
@@ -145,12 +146,13 @@ class FuelCalculatorApp(tk.Tk):
         try:
             distance_ab = float(self.input_vars[0].get())
             distance_bc = float(self.input_vars[1].get())
-            cruise_speed = float(self.input_vars[2].get())
-            fuel_consumption = float(self.input_vars[3].get())
-            headwind = float(self.input_vars[4].get())
+            taxi_time = float(self.input_vars[2].get())
+            cruise_speed = float(self.input_vars[3].get())
+            fuel_consumption = float(self.input_vars[4].get())
+            headwind = float(self.input_vars[5].get())
 
             # Validate inputs
-            if any(val < 0 for val in [distance_ab, distance_bc, headwind]) or cruise_speed <= 0 or fuel_consumption <= 0:
+            if any(val < 0 for val in [distance_ab, distance_bc, headwind, taxi_time]) or cruise_speed <= 0 or fuel_consumption <= 0:
                 self.result_label.config(text="Please enter valid positive numbers for all inputs.")
                 return
 
@@ -204,7 +206,8 @@ class FuelCalculatorApp(tk.Tk):
                     total_trip_fuel = total_fuel_ab + total_fuel_bc
                     reserve_fuel = (45 / 60) * fuel_consumption
 
-            total_fuel_required = total_trip_fuel + reserve_fuel
+            taxi_fuel = (taxi_time / 60) * fuel_consumption
+            total_fuel_required = total_trip_fuel + reserve_fuel + taxi_fuel
             self.result_label.config(text=f"Total Fuel Required: {total_fuel_required:.2f} gallons")
 
         except ValueError:

@@ -1,0 +1,4 @@
+- [x] Add taxi time input field to index.html
+- [x] Update script.js to include taxi fuel in calculateFuel function
+- [x] Add taxi time input to fuel_calculator.py GUI
+- [x] Update calculate_fuel method in fuel_calculator.py to include taxi fuel

@@ -33,6 +33,7 @@ const calculateFuel = () => {
     const cruiseSpeed = parseFloat(document.getElementById('cruise-speed').value);
     const fuelConsumption = parseFloat(document.getElementById('fuel-consumption').value);
     const headwind = parseFloat(document.getElementById('headwind').value);
+    const taxiTime = parseFloat(document.getElementById('taxi-time').value);
     const fuelMode = document.getElementById('fuel-mode').value;
 
     // For custom mode, get contingency and reserve inputs
@@ -50,6 +51,7 @@ const calculateFuel = () => {
         isNaN(cruiseSpeed) || cruiseSpeed <= 0 ||
         isNaN(fuelConsumption) || fuelConsumption <= 0 ||
         isNaN(headwind) || headwind < 0 ||
+        isNaN(taxiTime) || taxiTime < 0 ||
         isNaN(contingencyPercent) || contingencyPercent < 0 ||
         isNaN(reserveMinutes) || reserveMinutes < 0
     ) {
@@ -109,7 +111,8 @@ const calculateFuel = () => {
         }
     }
 
-    const totalFuelRequired = totalTripFuel + reserveFuel;
+    const taxiFuel = (taxiTime / 60) * fuelConsumption;
+    const totalFuelRequired = totalTripFuel + reserveFuel + taxiFuel;
 
     document.getElementById('result').innerText = `Total Fuel Required: ${totalFuelRequired.toFixed(2)} gallons`;
 };
