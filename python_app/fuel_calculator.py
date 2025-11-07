@@ -17,13 +17,15 @@ class FuelCalculatorApp(tk.Tk):
         self.create_widgets()
         # Set window size to fit the entire application
         self.update_idletasks()
-        width = self.winfo_reqwidth()
-        height = self.winfo_reqheight()
-        self.geometry(f'{width}x{height}')
+        self.req_width = self.winfo_reqwidth()
+        self.req_height = self.winfo_reqheight()
+        self.geometry(f'{self.req_width}x{self.req_height}')
         # Center the window on screen
-        x = (self.winfo_screenwidth() // 2) - (width // 2)
-        y = (self.winfo_screenheight() // 2) - (height // 2)
-        self.geometry(f'{width}x{height}+{x}+{y}')
+        x = (self.winfo_screenwidth() // 2) - (self.req_width // 2)
+        y = (self.winfo_screenheight() // 2) - (self.req_height // 2)
+        self.geometry(f'{self.req_width}x{self.req_height}+{x}+{y}')
+        # Bind to configure event to handle full screen changes
+        self.bind('<Configure>', self.on_resize)
         self.show_disclaimer()
 
     def setup_styles(self):
@@ -43,7 +45,7 @@ class FuelCalculatorApp(tk.Tk):
         style.configure("TLabel", background="#1E2A38", foreground="#FFFFFF", font=self.custom_font)
 
         # Entry styles
-        style.configure("TEntry", fieldbackground="#2A3A4A", bordercolor="#00A3E0", lightcolor="#00A3E0", darkcolor="#00A3E0", insertcolor="#FFFFFF", font=self.custom_font)
+        style.configure("TEntry", fieldbackground="#2A3A4A", bordercolor="#00A3E0", lightcolor="#00A3E0", darkcolor="#00A3E0", insertcolor="#FFFFFF", foreground="#FFFFFF", font=self.custom_font)
 
         # Button styles
         style.configure("Calc.TButton", background="#00A3E0", foreground="#FFFFFF", font=self.custom_font, padding=10, relief="raised")
@@ -55,12 +57,12 @@ class FuelCalculatorApp(tk.Tk):
 
     def create_widgets(self):
         # Main container frame
-        container = ttk.Frame(self, padding=20)
-        container.pack(fill="both", expand=True)
-        container.configure(style="Container.TFrame")
+        self.container = ttk.Frame(self, padding=20)
+        self.container.pack(fill="both", expand=True)
+        self.container.configure(style="Container.TFrame")
 
         # Header with icon and text
-        header_frame = ttk.Frame(container)
+        header_frame = ttk.Frame(self.container)
         header_frame.grid(row=0, column=0, columnspan=4, pady=(0, 15), sticky="w")
 
         # Load airplane icon
@@ -82,22 +84,22 @@ class FuelCalculatorApp(tk.Tk):
         header.pack(side="left")
 
         # Unit selection
-        ttk.Label(container, text="Select Unit:", font=self.custom_font).grid(row=1, column=0, sticky="w", pady=(5, 0))
+        ttk.Label(self.container, text="Select Unit:", font=self.custom_font).grid(row=1, column=0, sticky="w", pady=(5, 0))
         self.unit_var = tk.StringVar(value="USG")
-        self.unit_combobox = ttk.Combobox(container, textvariable=self.unit_var, state="readonly", values=["USG", "LBS", "L", "KG"], font=self.custom_font, width=10)
+        self.unit_combobox = ttk.Combobox(self.container, textvariable=self.unit_var, state="readonly", values=["USG", "LBS", "L", "KG"], font=self.custom_font, width=10)
         self.unit_combobox.grid(row=1, column=1, sticky="w", pady=(5, 0))
         self.unit_combobox.current(0)
         self.unit_combobox.bind("<<ComboboxSelected>>", lambda e: self.update_fuel_label(self.unit_var.get()))
 
         # Fuel mode selection
-        ttk.Label(container, text="Select Fuel Calculation Mode:", font=self.custom_font, foreground="#FFFFFF").grid(row=2, column=0, sticky="w", pady=(15, 5))
+        ttk.Label(self.container, text="Select Fuel Calculation Mode:", font=self.custom_font, foreground="#FFFFFF").grid(row=2, column=0, sticky="w", pady=(15, 5))
         self.fuel_mode_var = tk.StringVar(value="FAA Fuel Requirements")
-        self.fuel_mode_dropdown = ttk.Combobox(container, textvariable=self.fuel_mode_var, state="readonly", values=["FAA Fuel Requirements", "Custom Fuel"], font=self.custom_font)
+        self.fuel_mode_dropdown = ttk.Combobox(self.container, textvariable=self.fuel_mode_var, state="readonly", values=["FAA Fuel Requirements", "Custom Fuel"], font=self.custom_font)
         self.fuel_mode_dropdown.grid(row=3, column=0, columnspan=4, sticky="ew")
         self.fuel_mode_dropdown.bind("<<ComboboxSelected>>", lambda e: self.update_mode())
 
         # Custom inputs frame
-        custom_frame = ttk.LabelFrame(container, text="Custom Inputs", style="Custom.TLabelframe")
+        custom_frame = ttk.LabelFrame(self.container, text="Custom Inputs", style="Custom.TLabelframe")
         custom_frame.grid(row=4, column=0, columnspan=4, sticky="ew", pady=15)
 
         ttk.Label(custom_frame, text="Contingency (%):", font=self.custom_font).grid(row=0, column=0, sticky="w", padx=5, pady=5)
@@ -111,7 +113,7 @@ class FuelCalculatorApp(tk.Tk):
         self.reserve_entry.grid(row=0, column=3, sticky="w", padx=5, pady=5)
 
         # Flight type selection
-        flight_type_frame = ttk.LabelFrame(container, text="Flight Type", style="Custom.TLabelframe")
+        flight_type_frame = ttk.LabelFrame(self.container, text="Flight Type", style="Custom.TLabelframe")
         flight_type_frame.grid(row=5, column=0, columnspan=4, sticky="ew", pady=10)
 
         ttk.Label(flight_type_frame, text="Select Flight Type:").grid(row=0, column=0, sticky="w", padx=5, pady=5)
@@ -120,7 +122,7 @@ class FuelCalculatorApp(tk.Tk):
         self.flight_type_dropdown.grid(row=0, column=1, sticky="ew", padx=5, pady=5)
 
         # Flight parameters frame
-        params_frame = ttk.LabelFrame(container, text="Flight Parameters", style="Custom.TLabelframe")
+        params_frame = ttk.LabelFrame(self.container, text="Flight Parameters", style="Custom.TLabelframe")
         params_frame.grid(row=6, column=0, columnspan=4, sticky="ew", pady=10)
 
         # Create a StringVar for the dynamic fuel consumption label
@@ -149,11 +151,11 @@ class FuelCalculatorApp(tk.Tk):
         params_frame.columnconfigure(1, weight=1)
 
         # Calculate button
-        self.calc_button = ttk.Button(container, text="Calculate Fuel", command=self.calculate_fuel, style="Calc.TButton")
+        self.calc_button = ttk.Button(self.container, text="Calculate Fuel", command=self.calculate_fuel, style="Calc.TButton")
         self.calc_button.grid(row=7, column=0, columnspan=4, sticky="ew", pady=20)
 
         # Result label
-        self.result_label = ttk.Label(container, text="", background="#2A3A4A", foreground="#00A3E0", font=self.result_font, relief="groove", borderwidth=2, padding=10)
+        self.result_label = ttk.Label(self.container, text="", background="#2A3A4A", foreground="#00A3E0", font=self.result_font, relief="groove", borderwidth=2, padding=10)
         self.result_label.grid(row=8, column=0, columnspan=4, sticky="ew")
 
         # Initialize mode states
@@ -186,6 +188,17 @@ class FuelCalculatorApp(tk.Tk):
             self.contingency_entry.config(state="disabled")
             self.reserve_entry.config(state="disabled")
             self.flight_type_dropdown.config(state="disabled")
+
+    def on_resize(self, event):
+        # Check if the window is maximized
+        if self.state() == 'zoomed':
+            # Maximized: center the container at its normal size
+            self.container.pack_forget()
+            self.container.place(relx=0.5, rely=0.5, anchor="center", width=self.req_width, height=self.req_height)
+        else:
+            # Normal mode: fill the window
+            self.container.place_forget()
+            self.container.pack(fill="both", expand=True)
 
     def update_fuel_label(self, unit):
         # Update the fuel consumption label dynamically
