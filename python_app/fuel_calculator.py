@@ -8,14 +8,50 @@ class FuelCalculatorApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Fuel Calculator")
-        self.state('zoomed')  # Maximize window on start
         self.configure(bg="#1E2A38")  # Dark aviation blue background
         from tkinter.font import Font
         self.custom_font = Font(family="Segoe UI", size=12)
         self.header_font = Font(family="Segoe UI", size=28, weight="bold")
         self.result_font = Font(family="Segoe UI", size=14, weight="bold")
+        self.setup_styles()
         self.create_widgets()
+        # Set window size to fit the entire application
+        self.update_idletasks()
+        width = self.winfo_reqwidth()
+        height = self.winfo_reqheight()
+        self.geometry(f'{width}x{height}')
+        # Center the window on screen
+        x = (self.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.winfo_screenheight() // 2) - (height // 2)
+        self.geometry(f'{width}x{height}+{x}+{y}')
         self.show_disclaimer()
+
+    def setup_styles(self):
+        # Set theme to 'clam' for modern look
+        style = ttk.Style()
+        style.theme_use('clam')
+
+        # Define custom styles using Flight Simulator colors
+        # Background: #1E2A38 (dark blue), Accent: #00A3E0 (blue), Text: #FFFFFF (white)
+
+        # Frame styles
+        style.configure("Container.TFrame", background="#1E2A38")
+        style.configure("Custom.TLabelframe", background="#1E2A38", foreground="#FFFFFF", borderwidth=2, relief="groove")
+        style.configure("Custom.TLabelframe.Label", background="#1E2A38", foreground="#00A3E0", font=self.custom_font)
+
+        # Label styles
+        style.configure("TLabel", background="#1E2A38", foreground="#FFFFFF", font=self.custom_font)
+
+        # Entry styles
+        style.configure("TEntry", fieldbackground="#2A3A4A", bordercolor="#00A3E0", lightcolor="#00A3E0", darkcolor="#00A3E0", insertcolor="#FFFFFF", font=self.custom_font)
+
+        # Button styles
+        style.configure("Calc.TButton", background="#00A3E0", foreground="#FFFFFF", font=self.custom_font, padding=10, relief="raised")
+        style.map("Calc.TButton", background=[("active", "#007ACC")])
+
+        # Combobox styles
+        style.configure("TCombobox", fieldbackground="#2A3A4A", background="#1E2A38", foreground="#FFFFFF", arrowcolor="#00A3E0", bordercolor="#00A3E0", lightcolor="#00A3E0", darkcolor="#00A3E0", font=self.custom_font)
+        style.map("TCombobox", fieldbackground=[("readonly", "#2A3A4A")], background=[("readonly", "#1E2A38")])
 
     def create_widgets(self):
         # Main container frame
@@ -46,15 +82,12 @@ class FuelCalculatorApp(tk.Tk):
         header.pack(side="left")
 
         # Unit selection
-        unit_frame = ttk.Frame(container)
-        unit_frame.grid(row=1, column=0, columnspan=4, sticky="w", pady=(5, 0))
-        ttk.Label(unit_frame, text="Select Unit:", font=self.custom_font, foreground="#FFFFFF").pack(side="left", padx=(0, 10))
+        ttk.Label(container, text="Select Unit:", font=self.custom_font).grid(row=1, column=0, sticky="w", pady=(5, 0))
         self.unit_var = tk.StringVar(value="USG")
-        units = [("USG", "USG"), ("LBS", "LBS"), ("L", "L"), ("KG", "KG")]
-        for text, value in units:
-            rb = tk.Radiobutton(unit_frame, text=text, variable=self.unit_var, value=value, font=self.custom_font, bg="#1E2A38", fg="#FFFFFF", selectcolor="#1E2A38", activebackground="#1E2A38", activeforeground="#FFFFFF")
-            rb.pack(side="left", padx=(0, 10))
-            rb.bind("<Button-1>", lambda e, v=value: self.update_fuel_label(v))
+        self.unit_combobox = ttk.Combobox(container, textvariable=self.unit_var, state="readonly", values=["USG", "LBS", "L", "KG"], font=self.custom_font, width=10)
+        self.unit_combobox.grid(row=1, column=1, sticky="w", pady=(5, 0))
+        self.unit_combobox.current(0)
+        self.unit_combobox.bind("<<ComboboxSelected>>", lambda e: self.update_fuel_label(self.unit_var.get()))
 
         # Fuel mode selection
         ttk.Label(container, text="Select Fuel Calculation Mode:", font=self.custom_font, foreground="#FFFFFF").grid(row=2, column=0, sticky="w", pady=(15, 5))
@@ -78,7 +111,7 @@ class FuelCalculatorApp(tk.Tk):
         self.reserve_entry.grid(row=0, column=3, sticky="w", padx=5, pady=5)
 
         # Flight type selection
-        flight_type_frame = ttk.LabelFrame(container, text="Flight Type")
+        flight_type_frame = ttk.LabelFrame(container, text="Flight Type", style="Custom.TLabelframe")
         flight_type_frame.grid(row=5, column=0, columnspan=4, sticky="ew", pady=10)
 
         ttk.Label(flight_type_frame, text="Select Flight Type:").grid(row=0, column=0, sticky="w", padx=5, pady=5)
@@ -87,7 +120,7 @@ class FuelCalculatorApp(tk.Tk):
         self.flight_type_dropdown.grid(row=0, column=1, sticky="ew", padx=5, pady=5)
 
         # Flight parameters frame
-        params_frame = ttk.LabelFrame(container, text="Flight Parameters")
+        params_frame = ttk.LabelFrame(container, text="Flight Parameters", style="Custom.TLabelframe")
         params_frame.grid(row=6, column=0, columnspan=4, sticky="ew", pady=10)
 
         # Create a StringVar for the dynamic fuel consumption label
@@ -120,7 +153,7 @@ class FuelCalculatorApp(tk.Tk):
         self.calc_button.grid(row=7, column=0, columnspan=4, sticky="ew", pady=20)
 
         # Result label
-        self.result_label = ttk.Label(container, text="", background="#FFFFFF", font=self.result_font, relief="solid", padding=10)
+        self.result_label = ttk.Label(container, text="", background="#2A3A4A", foreground="#00A3E0", font=self.result_font, relief="groove", borderwidth=2, padding=10)
         self.result_label.grid(row=8, column=0, columnspan=4, sticky="ew")
 
         # Initialize mode states
