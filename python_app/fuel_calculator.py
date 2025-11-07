@@ -90,17 +90,23 @@ class FuelCalculatorApp(tk.Tk):
         params_frame = ttk.LabelFrame(container, text="Flight Parameters")
         params_frame.grid(row=6, column=0, columnspan=4, sticky="ew", pady=10)
 
+        # Create a StringVar for the dynamic fuel consumption label
+        self.fuel_label_var = tk.StringVar(value=f"Average fuel consumption ({self.unit_var.get()}/hr):")
+
         labels = [
             "A to B distance (nm):",
             "B to C distance (nm):",
             "Taxi time (minutes):",
             "Average cruise speed (kts):",
-            f"Average fuel consumption ({self.unit_var.get()}/hr):",
+            None,  # Placeholder for fuel consumption label
             "Average headwind (kts):"
         ]
         self.input_vars = []
         for i, label_text in enumerate(labels):
-            ttk.Label(params_frame, text=label_text).grid(row=i, column=0, sticky="w", padx=5, pady=5)
+            if i == 4:  # Fuel consumption label
+                ttk.Label(params_frame, textvariable=self.fuel_label_var).grid(row=i, column=0, sticky="w", padx=5, pady=5)
+            else:
+                ttk.Label(params_frame, text=label_text).grid(row=i, column=0, sticky="w", padx=5, pady=5)
             var = tk.StringVar(value="0" if label_text == "Taxi time (minutes):" else "")
             entry = ttk.Entry(params_frame, textvariable=var)
             entry.grid(row=i, column=1, sticky="ew", padx=5, pady=5)
@@ -150,9 +156,7 @@ class FuelCalculatorApp(tk.Tk):
 
     def update_fuel_label(self, unit):
         # Update the fuel consumption label dynamically
-        self.input_vars[4].set(f"Average fuel consumption ({unit}/hr):")
-        # Note: This is a placeholder; in Tkinter, labels are static, so we might need to recreate or update the label text
-        # For simplicity, we'll assume the label is updated elsewhere or use a variable label
+        self.fuel_label_var.set(f"Average fuel consumption ({unit}/hr):")
 
     def calculate_fuel(self):
         try:

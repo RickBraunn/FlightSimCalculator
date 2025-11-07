@@ -17,5 +17,5 @@
 - [x] In `calculate_fuel()`, convert input `fuel_consumption` from selected unit to USG/hr, calculate, then convert result to selected unit.
 
 ## Followup Steps
-- [ ] Test both HTML and Python apps to ensure calculations and conversions work correctly.
-- [ ] Verify UI updates (label changes, radio button selection).
+- [x] Test both HTML and Python apps to ensure calculations and conversions work correctly.
+- [x] Verify UI updates (label changes, radio button selection).
