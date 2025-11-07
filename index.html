@@ -10,7 +10,17 @@
     <div class="app-container">
         <header>
             <h1>Fuel Calculator</h1>
-            <p class="learn-more-text" id="learn-more">*learn more</p>
+            <div class="unit-selection">
+                <label>Select Unit:</label>
+                <input type="radio" id="unit-usg" name="unit" value="USG" checked>
+                <label for="unit-usg">USG</label>
+                <input type="radio" id="unit-lbs" name="unit" value="LBS">
+                <label for="unit-lbs">LBS</label>
+                <input type="radio" id="unit-l" name="unit" value="L">
+                <label for="unit-l">L</label>
+                <input type="radio" id="unit-kg" name="unit" value="KG">
+                <label for="unit-kg">KG</label>
+            </div>
         </header>
         <main>
             <form id="fuel-calculator" class="calculator-form">
@@ -71,7 +81,7 @@
                     <input type="number" id="cruise-speed" required />
                 </div>
                 <div class="input-group">
-                    <label for="fuel-consumption">Average fuel consumption (usg/hr)</label>
+                    <label for="fuel-consumption" id="fuel-consumption-label">Average fuel consumption (USG/hr)</label>
                     <input type="number" id="fuel-consumption" required />
                 </div>
                 <div class="input-group">

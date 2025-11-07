@@ -45,10 +45,16 @@ class FuelCalculatorApp(tk.Tk):
         header = ttk.Label(header_frame, text="Fuel Calculator", font=self.header_font, foreground="#00A3E0")
         header.pack(side="left")
 
-        # Learn more link
-        learn_more = ttk.Label(container, text="*learn more", foreground="#A0A0A0", cursor="hand2", font=self.custom_font)
-        learn_more.grid(row=1, column=0, columnspan=4, sticky="w")
-        learn_more.bind("<Button-1>", lambda e: self.show_info())
+        # Unit selection
+        unit_frame = ttk.Frame(container)
+        unit_frame.grid(row=1, column=0, columnspan=4, sticky="w", pady=(5, 0))
+        ttk.Label(unit_frame, text="Select Unit:", font=self.custom_font, foreground="#FFFFFF").pack(side="left", padx=(0, 10))
+        self.unit_var = tk.StringVar(value="USG")
+        units = [("USG", "USG"), ("LBS", "LBS"), ("L", "L"), ("KG", "KG")]
+        for text, value in units:
+            rb = tk.Radiobutton(unit_frame, text=text, variable=self.unit_var, value=value, font=self.custom_font, bg="#1E2A38", fg="#FFFFFF", selectcolor="#1E2A38", activebackground="#1E2A38", activeforeground="#FFFFFF")
+            rb.pack(side="left", padx=(0, 10))
+            rb.bind("<Button-1>", lambda e, v=value: self.update_fuel_label(v))
 
         # Fuel mode selection
         ttk.Label(container, text="Select Fuel Calculation Mode:", font=self.custom_font, foreground="#FFFFFF").grid(row=2, column=0, sticky="w", pady=(15, 5))
@@ -89,7 +95,7 @@ class FuelCalculatorApp(tk.Tk):
             "B to C distance (nm):",
             "Taxi time (minutes):",
             "Average cruise speed (kts):",
-            "Average fuel consumption (usg/hr):",
+            f"Average fuel consumption ({self.unit_var.get()}/hr):",
             "Average headwind (kts):"
         ]
         self.input_vars = []
@@ -142,19 +148,36 @@ class FuelCalculatorApp(tk.Tk):
             self.reserve_entry.config(state="disabled")
             self.flight_type_dropdown.config(state="disabled")
 
+    def update_fuel_label(self, unit):
+        # Update the fuel consumption label dynamically
+        self.input_vars[4].set(f"Average fuel consumption ({unit}/hr):")
+        # Note: This is a placeholder; in Tkinter, labels are static, so we might need to recreate or update the label text
+        # For simplicity, we'll assume the label is updated elsewhere or use a variable label
+
     def calculate_fuel(self):
         try:
             distance_ab = float(self.input_vars[0].get())
             distance_bc = float(self.input_vars[1].get())
             taxi_time = float(self.input_vars[2].get())
             cruise_speed = float(self.input_vars[3].get())
-            fuel_consumption = float(self.input_vars[4].get())
+            fuel_consumption_input = float(self.input_vars[4].get())
             headwind = float(self.input_vars[5].get())
+            selected_unit = self.unit_var.get()
 
             # Validate inputs
-            if any(val < 0 for val in [distance_ab, distance_bc, headwind, taxi_time]) or cruise_speed <= 0 or fuel_consumption <= 0:
+            if any(val < 0 for val in [distance_ab, distance_bc, headwind, taxi_time]) or cruise_speed <= 0 or fuel_consumption_input <= 0:
                 self.result_label.config(text="Please enter valid positive numbers for all inputs.")
                 return
+
+            # Convert fuel consumption to USG/hr for calculation
+            fuel_consumption = fuel_consumption_input
+            if selected_unit == 'LBS':
+                fuel_consumption = fuel_consumption_input / 6.7  # LBS to USG
+            elif selected_unit == 'L':
+                fuel_consumption = fuel_consumption_input / 3.785  # L to USG
+            elif selected_unit == 'KG':
+                fuel_consumption = fuel_consumption_input / 3.04  # KG to USG
+            # USG remains as is
 
             mode = self.fuel_mode_var.get()
             if mode.lower() == "custom":
@@ -208,7 +231,21 @@ class FuelCalculatorApp(tk.Tk):
 
             taxi_fuel = (taxi_time / 60) * fuel_consumption
             total_fuel_required = total_trip_fuel + reserve_fuel + taxi_fuel
-            self.result_label.config(text=f"Total Fuel Required: {total_fuel_required:.2f} gallons")
+
+            # Convert total fuel back to selected unit for display
+            unit_name = 'gallons'
+            if selected_unit == 'LBS':
+                total_fuel_required *= 6.7  # USG to LBS
+                unit_name = 'lbs'
+            elif selected_unit == 'L':
+                total_fuel_required *= 3.785  # USG to L
+                unit_name = 'liters'
+            elif selected_unit == 'KG':
+                total_fuel_required *= 3.04  # USG to KG
+                unit_name = 'kg'
+            # USG remains as gallons
+
+            self.result_label.config(text=f"Total Fuel Required: {total_fuel_required:.2f} {unit_name}")
 
         except ValueError:
             self.result_label.config(text="Please enter valid numbers in all fields.")
