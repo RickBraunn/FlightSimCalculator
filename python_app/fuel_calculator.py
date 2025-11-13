@@ -111,9 +111,10 @@ class FuelCalculatorApp(tk.Tk):
         flight_type_frame.grid(row=5, column=0, columnspan=4, sticky="ew", pady=10)
 
         ttk.Label(flight_type_frame, text="Select Flight Type:").grid(row=0, column=0, sticky="w", padx=5, pady=5)
-        self.flight_type_var = tk.StringVar(value="Select Flight Rule")
-        self.flight_type_dropdown = ttk.Combobox(flight_type_frame, textvariable=self.flight_type_var, state="readonly", values=["Select Flight Rule", "VFR", "IFR"])
+        self.flight_type_var = tk.StringVar(value="VFR")
+        self.flight_type_dropdown = ttk.Combobox(flight_type_frame, textvariable=self.flight_type_var, state="readonly", values=["VFR", "IFR"])
         self.flight_type_dropdown.grid(row=0, column=1, sticky="ew", padx=5, pady=5)
+        
 
         # Flight parameters frame
         params_frame = ttk.LabelFrame(self.container, text="Flight Parameters", style="Custom.TLabelframe")
