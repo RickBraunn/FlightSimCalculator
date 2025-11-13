@@ -10,17 +10,6 @@
     <div class="app-container">
         <header>
             <h1>Fuel Calculator</h1>
-            <div class="unit-selection">
-                <label>Select Unit:</label>
-                <input type="radio" id="unit-usg" name="unit" value="USG" checked>
-                <label for="unit-usg">USG</label>
-                <input type="radio" id="unit-lbs" name="unit" value="LBS">
-                <label for="unit-lbs">LBS</label>
-                <input type="radio" id="unit-l" name="unit" value="L">
-                <label for="unit-l">L</label>
-                <input type="radio" id="unit-kg" name="unit" value="KG">
-                <label for="unit-kg">KG</label>
-            </div>
         </header>
         <main>
             <form id="fuel-calculator" class="calculator-form">
@@ -80,13 +69,29 @@
                     <label for="cruise-speed">Average cruise speed (kts)</label>
                     <input type="number" id="cruise-speed" required />
                 </div>
-                <div class="input-group">
+                <div class="input-group input-group-inline">
                     <label for="fuel-consumption" id="fuel-consumption-label">Average fuel consumption (USG/hr)</label>
                     <input type="number" id="fuel-consumption" required />
+                    <select id="fuel-consumption-unit">
+                        <option value="USG">USG</option>
+                        <option value="LBS">LBS</option>
+                        <option value="L">L</option>
+                        <option value="KG">KG</option>
+                    </select>
                 </div>
                 <div class="input-group">
                     <label for="headwind">Average headwind (kts)</label>
                     <input type="number" id="headwind" required />
+                </div>
+
+                <div class="input-group">
+                    <label for="result-unit">Result Unit:</label>
+                    <select id="result-unit">
+                        <option value="USG">USG</option>
+                        <option value="LBS">LBS</option>
+                        <option value="L">L</option>
+                        <option value="KG">KG</option>
+                    </select>
                 </div>
 
                 <button type="submit" class="calculate-btn">Calculate Fuel</button>

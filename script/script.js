@@ -2,19 +2,50 @@ document.addEventListener('DOMContentLoaded', () => {
     showModal('Disclaimer: This fuel calculator is designed exclusively for flight simulation purposes. It is not intended for actual flight planning or navigation. Please consult official resources and professionals for real-world flight operations.');
 });
 
-// Unit selection
-const unitRadios = document.querySelectorAll('input[name="unit"]');
+// Unit selection for fuel consumption
+const fuelConsumptionUnitSelect = document.getElementById('fuel-consumption-unit');
 const fuelConsumptionLabel = document.getElementById('fuel-consumption-label');
+const fuelConsumptionInput = document.getElementById('fuel-consumption');
+let previousFuelConsumptionUnit = 'USG'; // Track previous unit for conversion
 
 // Function to update fuel consumption label based on selected unit
 const updateFuelConsumptionLabel = () => {
-    const selectedUnit = document.querySelector('input[name="unit"]:checked').value;
+    const selectedUnit = fuelConsumptionUnitSelect.value;
     fuelConsumptionLabel.textContent = `Average fuel consumption (${selectedUnit}/hr)`;
 };
 
-// Event listeners for unit radio buttons
-unitRadios.forEach(radio => {
-    radio.addEventListener('change', updateFuelConsumptionLabel);
+// Function to convert fuel consumption value in real-time
+const convertFuelConsumption = () => {
+    const currentValue = parseFloat(fuelConsumptionInput.value);
+    if (isNaN(currentValue)) return;
+
+    // Convert from previous unit to USG
+    let valueInUSG = currentValue;
+    if (previousFuelConsumptionUnit === 'LBS') {
+        valueInUSG = currentValue / 6.7;
+    } else if (previousFuelConsumptionUnit === 'L') {
+        valueInUSG = currentValue / 3.785;
+    } else if (previousFuelConsumptionUnit === 'KG') {
+        valueInUSG = currentValue / 3.04;
+    }
+    // Now convert to new unit
+    const newUnit = fuelConsumptionUnitSelect.value;
+    let newValue = valueInUSG;
+    if (newUnit === 'LBS') {
+        newValue = valueInUSG * 6.7;
+    } else if (newUnit === 'L') {
+        newValue = valueInUSG * 3.785;
+    } else if (newUnit === 'KG') {
+        newValue = valueInUSG * 3.04;
+    }
+    fuelConsumptionInput.value = newValue.toFixed(2);
+    previousFuelConsumptionUnit = newUnit; // Update previous unit
+};
+
+// Event listener for fuel consumption unit change
+fuelConsumptionUnitSelect.addEventListener('change', () => {
+    convertFuelConsumption();
+    updateFuelConsumptionLabel();
 });
 
 // Initialize label on load
@@ -28,7 +59,8 @@ const calculateFuel = () => {
     const headwind = parseFloat(document.getElementById('headwind').value);
     const taxiTime = parseFloat(document.getElementById('taxi-time').value);
     const fuelMode = document.getElementById('fuel-mode').value;
-    const selectedUnit = document.querySelector('input[name="unit"]:checked').value;
+    const fuelConsumptionUnit = document.getElementById('fuel-consumption-unit').value;
+    const resultUnit = document.getElementById('result-unit').value;
 
     // For custom mode, get contingency and reserve inputs
     let contingencyPercent = 5;
@@ -55,11 +87,11 @@ const calculateFuel = () => {
 
     // Convert fuel consumption to USG/hr for calculation
     let fuelConsumption = fuelConsumptionInput;
-    if (selectedUnit === 'LBS') {
+    if (fuelConsumptionUnit === 'LBS') {
         fuelConsumption = fuelConsumptionInput / 6.7; // LBS to USG
-    } else if (selectedUnit === 'L') {
+    } else if (fuelConsumptionUnit === 'L') {
         fuelConsumption = fuelConsumptionInput / 3.785; // L to USG
-    } else if (selectedUnit === 'KG') {
+    } else if (fuelConsumptionUnit === 'KG') {
         fuelConsumption = fuelConsumptionInput / 3.04; // KG to USG
     }
     // USG remains as is
@@ -117,17 +149,19 @@ const calculateFuel = () => {
     }
 
     const taxiFuel = (taxiTime / 60) * fuelConsumption;
-    let totalFuelRequired = totalTripFuel + reserveFuel + taxiFuel;
+    let totalFuelRequiredUSG = totalTripFuel + reserveFuel + taxiFuel;
+    lastCalculatedFuelUSG = totalFuelRequiredUSG; // Store for result unit changes
 
-    // Convert total fuel back to selected unit for display
+    // Convert total fuel back to selected result unit for display
+    let totalFuelRequired = totalFuelRequiredUSG;
     let unitName = 'gallons';
-    if (selectedUnit === 'LBS') {
+    if (resultUnit === 'LBS') {
         totalFuelRequired *= 6.7; // USG to LBS
         unitName = 'lbs';
-    } else if (selectedUnit === 'L') {
+    } else if (resultUnit === 'L') {
         totalFuelRequired *= 3.785; // USG to L
         unitName = 'liters';
-    } else if (selectedUnit === 'KG') {
+    } else if (resultUnit === 'KG') {
         totalFuelRequired *= 3.04; // USG to KG
         unitName = 'kg';
     }
@@ -156,6 +190,31 @@ const toggleInputs = () => {
 };
 toggleInputs();
 fuelModeSelect.addEventListener('change', toggleInputs);
+
+// Result unit change: re-display result in new unit without recalculating
+const resultUnitSelect = document.getElementById('result-unit');
+let lastCalculatedFuelUSG = 0; // Store the last calculated fuel in USG
+
+const updateResultDisplay = () => {
+    if (lastCalculatedFuelUSG === 0) return; // No calculation done yet
+
+    const resultUnit = resultUnitSelect.value;
+    let totalFuelRequired = lastCalculatedFuelUSG;
+    let unitName = 'gallons';
+    if (resultUnit === 'LBS') {
+        totalFuelRequired *= 6.7;
+        unitName = 'lbs';
+    } else if (resultUnit === 'L') {
+        totalFuelRequired *= 3.785;
+        unitName = 'liters';
+    } else if (resultUnit === 'KG') {
+        totalFuelRequired *= 3.04;
+        unitName = 'kg';
+    }
+    document.getElementById('result').innerText = `Total Fuel Required: ${totalFuelRequired.toFixed(2)} ${unitName}`;
+};
+
+resultUnitSelect.addEventListener('change', updateResultDisplay);
 
 fuelCalculatorForm.addEventListener('submit', (event) => {
     event.preventDefault();
