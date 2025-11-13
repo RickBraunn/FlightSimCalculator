@@ -258,7 +258,7 @@ class FuelCalculatorApp(tk.Tk):
             elif result_unit == 'KG':
                 total_fuel_required *= 3.04
                 unit_name = 'kg'
-            self.result_label.config(text=f"Total Fuel Required: {total_fuel_required:.2f} {unit_name}")
+            self.result_label.config(text=f"Total Fuel Required: {total_fuel_required:.2f} {unit_name}\nEstimated Time A to B: {self.last_calculated_time_hours} hours {self.last_calculated_time_minutes} minutes")
 
     def calculate_fuel(self):
         try:
@@ -339,8 +339,15 @@ class FuelCalculatorApp(tk.Tk):
             taxi_fuel = (taxi_time / 60) * fuel_consumption
             total_fuel_required = total_trip_fuel + reserve_fuel + taxi_fuel
 
+            # Calculate estimated time A to B
+            time_hours = distance_ab / speed
+            hours = int(time_hours)
+            minutes = round((time_hours - hours) * 60)
+
             # Store the calculated fuel in USG for later unit conversion
             self.last_calculated_fuel_usg = total_fuel_required
+            self.last_calculated_time_hours = hours
+            self.last_calculated_time_minutes = minutes
 
             # Convert total fuel back to selected result unit for display
             unit_name = 'gallons'
@@ -355,7 +362,7 @@ class FuelCalculatorApp(tk.Tk):
                 unit_name = 'kg'
             # USG remains as gallons
 
-            self.result_label.config(text=f"Total Fuel Required: {total_fuel_required:.2f} {unit_name}")
+            self.result_label.config(text=f"Total Fuel Required: {total_fuel_required:.2f} {unit_name}\nEstimated Time A to B: {hours} hours {minutes} minutes")
 
         except ValueError:
             self.result_label.config(text="Please enter valid numbers in all fields.")

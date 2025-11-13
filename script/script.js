@@ -152,6 +152,13 @@ const calculateFuel = () => {
     let totalFuelRequiredUSG = totalTripFuel + reserveFuel + taxiFuel;
     lastCalculatedFuelUSG = totalFuelRequiredUSG; // Store for result unit changes
 
+    // Calculate estimated time A to B
+    const timeHours = distanceAB / speed;
+    const hours = Math.floor(timeHours);
+    const minutes = Math.round((timeHours - hours) * 60);
+    lastCalculatedTimeHours = hours; // Store for result unit changes
+    lastCalculatedTimeMinutes = minutes; // Store for result unit changes
+
     // Convert total fuel back to selected result unit for display
     let totalFuelRequired = totalFuelRequiredUSG;
     let unitName = 'gallons';
@@ -167,7 +174,7 @@ const calculateFuel = () => {
     }
     // USG remains as gallons
 
-    document.getElementById('result').innerText = `Total Fuel Required: ${totalFuelRequired.toFixed(2)} ${unitName}`;
+    document.getElementById('result').innerText = `Total Fuel Required: ${totalFuelRequired.toFixed(2)} ${unitName}\nEstimated Time A to B: ${hours} hours ${minutes} minutes`;
 };
 
 const fuelCalculatorForm = document.getElementById('fuel-calculator');
@@ -194,6 +201,8 @@ fuelModeSelect.addEventListener('change', toggleInputs);
 // Result unit change: re-display result in new unit without recalculating
 const resultUnitSelect = document.getElementById('result-unit');
 let lastCalculatedFuelUSG = 0; // Store the last calculated fuel in USG
+let lastCalculatedTimeHours = 0; // Store the last calculated time in hours
+let lastCalculatedTimeMinutes = 0; // Store the last calculated time in minutes
 
 const updateResultDisplay = () => {
     if (lastCalculatedFuelUSG === 0) return; // No calculation done yet
@@ -211,7 +220,7 @@ const updateResultDisplay = () => {
         totalFuelRequired *= 3.04;
         unitName = 'kg';
     }
-    document.getElementById('result').innerText = `Total Fuel Required: ${totalFuelRequired.toFixed(2)} ${unitName}`;
+    document.getElementById('result').innerText = `Total Fuel Required: ${totalFuelRequired.toFixed(2)} ${unitName}\nEstimated Time A to B: ${lastCalculatedTimeHours} hours ${lastCalculatedTimeMinutes} minutes`;
 };
 
 resultUnitSelect.addEventListener('change', updateResultDisplay);
