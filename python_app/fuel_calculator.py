@@ -142,7 +142,7 @@ class FuelCalculatorApp(tk.Tk):
                 ttk.Label(params_frame, textvariable=self.fuel_label_var).grid(row=i, column=0, sticky="w", padx=5, pady=5)
             else:
                 ttk.Label(params_frame, text=label_text).grid(row=i, column=0, sticky="w", padx=5, pady=5)
-            var = tk.StringVar(value="0" if label_text == "Taxi time (minutes):" else "")
+            var = tk.StringVar(value="")
             entry = ttk.Entry(params_frame, textvariable=var)
             entry.grid(row=i, column=1, sticky="ew", padx=5, pady=5)
             self.input_vars.append(var)

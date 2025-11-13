@@ -1,4 +1,2 @@
-- [x] Modify __init__ to add bind for <Configure> event to detect window resize/full screen
-- [x] Update create_widgets to assign container to self.container for reference
-- [x] Add on_resize method to handle layout changes: fill in normal mode, center in full screen
-- [x] Test the changes to ensure form centers in full screen mode
+- [x] Remove default value "0" from taxi-time input in index.html
+- [x] Change default value for Taxi time StringVar to "" in fuel_calculator.py
