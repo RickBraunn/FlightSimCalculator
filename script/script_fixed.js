@@ -257,7 +257,7 @@ const calculateFuel = () => {
         } else if (flightType === 'VFR') {
             // VFR: Fuel for trip + 30 minutes reserve
             const tripFuelAB = calculateLegFuel(distanceAB, speed, fuelConsumption, 0);
-            const tripFuelBC = calculateLegeringLegFuel(distanceBC, speed, fuelConsumption, 0);
+            const tripFuelBC = calculateLegFuel(distanceBC, speed, fuelConsumption, 0);
             totalTripFuel = tripFuelAB + tripFuelBC;
             reserveFuel = (30 / 60) * fuelConsumption;
         } else {
