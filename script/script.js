@@ -1,26 +1,53 @@
 // Aircraft Profiles System
 let aircraftProfiles = null;
+
+// Safe Modal System
+function safeShowModal(message) {
+    const modal = document.getElementById('custom-alert');
+    const messageEl = document.getElementById('alert-message');
+    const closeBtn = document.querySelector('.close-btn');
+    const okBtn = document.getElementById('ok-btn');
+
+    if (!modal || !messageEl || !closeBtn || !okBtn) {
+        console.warn('Modal elements not found. Skipping modal.');
+        return;
+    }
+
+    messageEl.textContent = message;
+    modal.style.display = 'block';
+
+    const closeModal = () => {
+        modal.style.display = 'none';
+    };
+
+    closeBtn.onclick = closeModal;
+    okBtn.onclick = closeModal;
+}
 let selectedAircraft = 'Custom';
 let lastCalculatedFuelUSG = 0;
 let lastCalculatedTimeHours = 0;
 let lastCalculatedTimeMinutes = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
-    //showModal('Disclaimer: This fuel calculator is designed exclusively for flight simulation purposes. It is not intended for actual flight planning or navigation. Please consult official resources and professionals for real-world flight operations.');
-    try {
-    if (typeof showModal === 'function') {
-        showModal('Disclaimer: This fuel calculator is designed exclusively for flight simulation purposes. It is not intended for actual flight planning or navigation. Please consult official resources and professionals for real-world flight operations.');
-    }
-} catch (error) {
-    console.warn('Modal failed:', error);
-}
-    loadAircraftProfiles();
+    // Safe non-blocking modal with localStorage
+    setTimeout(() => {
+        try {
+            if (!localStorage.getItem('modalShown')) {
+                safeShowModal('Disclaimer: This fuel calculator is designed exclusively for flight simulation purposes. It is not intended for actual flight planning or navigation. Please consult official resources and professionals for real-world flight operations.');
+                localStorage.setItem('modalShown', 'true');
+            }
+        } catch (e) {
+            console.warn('Modal error:', e);
+        }
+    }, 100);
+    
+    loadAircraftProfiles(); // Always runs first, unblocked
 });
 
 // Load aircraft profiles from JSON
 const loadAircraftProfiles = async () => {
     try {
-        const response = await fetch('/data/aircraftProfiles.json');
+        const response = await fetch('data/aircraftProfiles.json');
         if (!response.ok) throw new Error('JSON load failed');
         aircraftProfiles = await response.json();
         populateAircraftDropdown();
