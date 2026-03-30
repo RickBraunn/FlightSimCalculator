@@ -1,19 +1,18 @@
-# TODO: Implement Separate Units for Fuel Consumption Input and Result Output
+# Aircraft Preset System Implementation TODO
 
-## Web App Changes
-- [ ] Remove global unit selection from header in index.html
-- [ ] Add select for fuel consumption unit next to the input field in index.html
-- [ ] Add select for result unit before the "Calculate Fuel" button in index.html
-- [ ] Update script.js to handle separate units: real-time conversion for fuel consumption input, result conversion on unit change
+## Approved Plan Summary
+- Plan B: Allow edits after autofill
+- Add summary display
+- Only web version (no Python)
 
-## Python App Changes
-- [ ] Remove global unit selection from top in fuel_calculator.py
-- [ ] Add combobox for fuel consumption unit next to the input
-- [ ] Add combobox for result unit before the calculate button
-- [ ] Update logic for real-time input conversion and result display conversion
+## Steps (Sequential)
 
-## Testing
-- [ ] Test real-time conversions in web app
-- [ ] Test real-time conversions in Python app
-- [ ] Verify calculations remain accurate in USG internally
-- [ ] Ensure UI updates correctly on unit changes
+- [x] **Step 1**: Edit index.html - Add aircraft dropdown + summary div (before cruise-speed input)
+- [x] **Step 1**: Edit index.html - Add aircraft dropdown + summary div (before cruise-speed input)
+- [x] **Step 2**: Edit src/styles.css - Add .aircraft-summary style  
+- [x] **Step 3**: Edit script/script.js - Add loadAircraftProfiles(), populateAircraftDropdown(), onAircraftChange(), modify calculateFuel() with preset overrides
+- [ ] **Step 4**: Test integration - Manual calc, preset select, unit changes, modes (FAA/Custom)
+- [ ] **Step 5**: Handle edge cases - JSON fail fallback
+- [x] **Complete**: attempt_completion with demo command (after testing)
+
+**Current Progress**: Steps 1-3 complete. Testing next (open index.html to verify).

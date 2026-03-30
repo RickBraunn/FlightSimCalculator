@@ -1,0 +1,107 @@
+{
+  "C152": {
+    "cruiseSpeed": 95,
+    "fuelBurn": 6.0,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 0.5
+  },
+  "C172 (G1000)": {
+    "cruiseSpeed": 110,
+    "fuelBurn": 8.5,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 0.8
+  },
+  "C208B Grand Caravan": {
+    "cruiseSpeed": 160,
+    "fuelBurn": 48.0,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 2.5
+  },
+  "TBM 930": {
+    "cruiseSpeed": 300,
+    "fuelBurn": 60.0,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 3.0
+  },
+  "Black Square Bonanza Pro": {
+    "cruiseSpeed": 170,
+    "fuelBurn": 14.5,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 1.2
+  },
+  "Black Square Baron Pro": {
+    "cruiseSpeed": 190,
+    "fuelBurn": 27.0,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 2.0
+  },
+  "Black Square Caravan Passenger": {
+    "cruiseSpeed": 160,
+    "fuelBurn": 50.0,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 2.5
+  },
+  "Black Square Caravan Amphibian": {
+    "cruiseSpeed": 155,
+    "fuelBurn": 52.0,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 3.0
+  },
+  "Black Square Caravan Cargo": {
+    "cruiseSpeed": 165,
+    "fuelBurn": 48.0,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 2.5
+  },
+  "Black Square TBM 850": {
+    "cruiseSpeed": 285,
+    "fuelBurn": 55.0,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 3.0
+  },
+  "Black Square Piston Duke": {
+    "cruiseSpeed": 200,
+    "fuelBurn": 28.0,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 2.0
+  },
+  "Black Square Turbine Duke": {
+    "cruiseSpeed": 270,
+    "fuelBurn": 95.0,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 4.0
+  },
+  "COWS DA40": {
+    "cruiseSpeed": 135,
+    "fuelBurn": 10.0,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 0.8
+  },
+  "COWS DA42": {
+    "cruiseSpeed": 180,
+    "fuelBurn": 15.0,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 1.5
+  },
+  "FSReborn FSR500": {
+    "cruiseSpeed": 300,
+    "fuelBurn": 65.0,
+    "fuelUnit": "GPH",
+    "reserveMinutes": 45,
+    "taxiFuel": 3.5
+  }
+}

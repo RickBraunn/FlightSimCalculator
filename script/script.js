@@ -1,6 +1,80 @@
+// Aircraft Profiles System
+let aircraftProfiles = null;
+let selectedAircraft = 'Custom';
+let lastCalculatedFuelUSG = 0;
+let lastCalculatedTimeHours = 0;
+let lastCalculatedTimeMinutes = 0;
+
 document.addEventListener('DOMContentLoaded', () => {
-    showModal('Disclaimer: This fuel calculator is designed exclusively for flight simulation purposes. It is not intended for actual flight planning or navigation. Please consult official resources and professionals for real-world flight operations.');
+    //showModal('Disclaimer: This fuel calculator is designed exclusively for flight simulation purposes. It is not intended for actual flight planning or navigation. Please consult official resources and professionals for real-world flight operations.');
+    try {
+    if (typeof showModal === 'function') {
+        showModal('Disclaimer: This fuel calculator is designed exclusively for flight simulation purposes. It is not intended for actual flight planning or navigation. Please consult official resources and professionals for real-world flight operations.');
+    }
+} catch (error) {
+    console.warn('Modal failed:', error);
+}
+    loadAircraftProfiles();
 });
+
+// Load aircraft profiles from JSON
+const loadAircraftProfiles = async () => {
+    try {
+        const response = await fetch('/data/aircraftProfiles.json');
+        if (!response.ok) throw new Error('JSON load failed');
+        aircraftProfiles = await response.json();
+        populateAircraftDropdown();
+    } catch (error) {
+        console.warn('Aircraft profiles failed to load:', error);
+        document.getElementById('aircraft-summary').textContent = 'Aircraft presets unavailable - using manual input';
+    }
+};
+
+// Populate dropdown with aircraft options
+const populateAircraftDropdown = () => {
+    const select = document.getElementById('aircraft-select');
+    select.innerHTML = '<option value="Custom">Custom (Manual Input)</option>';
+    if (aircraftProfiles) {
+        Object.keys(aircraftProfiles).forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            select.appendChild(option);
+        });
+    }
+    select.addEventListener('change', onAircraftChange);
+};
+
+// Handle aircraft selection change
+const onAircraftChange = () => {
+    const aircraftName = document.getElementById('aircraft-select').value;
+    selectedAircraft = aircraftName;
+    const summaryDiv = document.getElementById('aircraft-summary');
+    
+    if (aircraftName === 'Custom' || !aircraftProfiles || !aircraftProfiles[aircraftName]) {
+        summaryDiv.textContent = '';
+        // Enable manual editing (already enabled)
+        return;
+    }
+    
+    const profile = aircraftProfiles[aircraftName];
+    
+    // Auto-fill fields (allow overrides)
+    document.getElementById('cruise-speed').value = profile.cruiseSpeed;
+    document.getElementById('fuel-consumption').value = profile.fuelBurn;
+    document.getElementById('fuel-consumption-unit').value = 'USG'; // GPH = USG/hr
+    document.getElementById('fuel-consumption-label').textContent = `Average fuel consumption (${profile.fuelUnit}/hr)`;
+    document.getElementById('taxi-time').value = 0; // Use taxiFuel directly
+    
+    // Update summary display
+    summaryDiv.innerHTML = `
+        <strong>${aircraftName}</strong><br>
+        Cruise: ${profile.cruiseSpeed} kts | Fuel: ${profile.fuelBurn} ${profile.fuelUnit}/hr | 
+        Taxi: ${profile.taxiFuel} USG | Reserve: ${profile.reserveMinutes} min
+    `;
+};
+
+
 
 // Unit selection for fuel consumption
 const fuelConsumptionUnitSelect = document.getElementById('fuel-consumption-unit');
@@ -54,34 +128,46 @@ const calculateFuel = () => {
     // Get input values and parse as floats
     const distanceAB = parseFloat(document.getElementById('distance-ab').value);
     const distanceBC = parseFloat(document.getElementById('distance-bc').value);
-    const cruiseSpeed = parseFloat(document.getElementById('cruise-speed').value);
-    const fuelConsumptionInput = parseFloat(document.getElementById('fuel-consumption').value);
     const headwind = parseFloat(document.getElementById('headwind').value);
-    const taxiTime = parseFloat(document.getElementById('taxi-time').value);
     const fuelMode = document.getElementById('fuel-mode').value;
     const fuelConsumptionUnit = document.getElementById('fuel-consumption-unit').value;
     const resultUnit = document.getElementById('result-unit').value;
 
-    // For custom mode, get contingency and reserve inputs
-    let contingencyPercent = 5;
-    let reserveMinutes = 45;
-    if (fuelMode === 'custom') {
-        contingencyPercent = parseFloat(document.getElementById('contingency').value);
-        reserveMinutes = parseFloat(document.getElementById('reserve-minutes').value);
+    // Aircraft preset overrides (Plan B: input values take precedence if edited)
+    let cruiseSpeed = parseFloat(document.getElementById('cruise-speed').value);
+    let fuelConsumptionInput = parseFloat(document.getElementById('fuel-consumption').value);
+    let taxiTime = parseFloat(document.getElementById('taxi-time').value);
+    
+    let taxiFuelOverride = 0;
+    let reserveMinutesOverride = 45;
+    
+    if (selectedAircraft !== 'Custom' && aircraftProfiles && aircraftProfiles[selectedAircraft]) {
+        const profile = aircraftProfiles[selectedAircraft];
+        // Use input if edited, else preset
+        cruiseSpeed = isNaN(cruiseSpeed) ? profile.cruiseSpeed : cruiseSpeed;
+        fuelConsumptionInput = isNaN(fuelConsumptionInput) ? profile.fuelBurn : fuelConsumptionInput;
+        taxiTime = isNaN(taxiTime) || taxiTime === 0 ? 0 : taxiTime; // Prefer preset taxiFuel if time=0
+        taxiFuelOverride = profile.taxiFuel;
+        reserveMinutesOverride = profile.reserveMinutes;
     }
 
-    // Validate inputs
+    // For custom mode, get contingency and reserve inputs (override with preset if applicable)
+    let contingencyPercent = 5;
+    let reserveMinutes = reserveMinutesOverride;
+    if (fuelMode === 'custom') {
+        contingencyPercent = parseFloat(document.getElementById('contingency').value) || 5;
+        reserveMinutes = parseFloat(document.getElementById('reserve-minutes').value) || reserveMinutesOverride;
+    }
+
+    // Validate inputs (relaxed for auto-filled)
     if (
         isNaN(distanceAB) || distanceAB < 0 ||
         isNaN(distanceBC) || distanceBC < 0 ||
         isNaN(cruiseSpeed) || cruiseSpeed <= 0 ||
         isNaN(fuelConsumptionInput) || fuelConsumptionInput <= 0 ||
-        isNaN(headwind) || headwind < 0 ||
-        isNaN(taxiTime) || taxiTime < 0 ||
-        isNaN(contingencyPercent) || contingencyPercent < 0 ||
-        isNaN(reserveMinutes) || reserveMinutes < 0
+        isNaN(headwind) || headwind < 0
     ) {
-        document.getElementById('result').innerText = 'Please enter valid positive numbers for all inputs.';
+        document.getElementById('result').innerText = 'Please enter valid positive numbers for required inputs.';
         return;
     }
 
@@ -148,7 +234,8 @@ const calculateFuel = () => {
         }
     }
 
-    const taxiFuel = (taxiTime / 60) * fuelConsumption;
+    // Taxi fuel: preset override if applicable, else time-based
+    let taxiFuel = taxiFuelOverride || (taxiTime / 60) * fuelConsumption;
     let totalFuelRequiredUSG = totalTripFuel + reserveFuel + taxiFuel;
     lastCalculatedFuelUSG = totalFuelRequiredUSG; // Store for result unit changes
 
@@ -199,10 +286,7 @@ toggleInputs();
 fuelModeSelect.addEventListener('change', toggleInputs);
 
 // Result unit change: re-display result in new unit without recalculating
-const resultUnitSelect = document.getElementById('result-unit');
-let lastCalculatedFuelUSG = 0; // Store the last calculated fuel in USG
-let lastCalculatedTimeHours = 0; // Store the last calculated time in hours
-let lastCalculatedTimeMinutes = 0; // Store the last calculated time in minutes
+const resultUnitSelect = document.getElementById('result-unit'); // Globals already defined at top
 
 const updateResultDisplay = () => {
     if (lastCalculatedFuelUSG === 0) return; // No calculation done yet

@@ -219,4 +219,13 @@ select:focus {
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
+/* Aircraft Summary */
+.aircraft-summary {
+  font-size: 0.9em;
+  color: #007BFF;
+  font-style: italic;
+  margin-top: 5px;
+
+}
+
 /*# sourceMappingURL=styles.css.map */

@@ -65,6 +65,16 @@
                     <label for="taxi-time">Taxi time (minutes)</label>
                     <input type="number" id="taxi-time" min="0" />
                 </div>
+                
+                <!-- Aircraft Preset System -->
+                <div class="input-group">
+                    <label for="aircraft-select">Select Aircraft:</label>
+                    <select id="aircraft-select">
+                        <option value="Custom">Custom (Manual Input)</option>
+                    </select>
+                </div>
+                <div id="aircraft-summary" class="aircraft-summary"></div>
+                
                 <div class="input-group">
                     <label for="cruise-speed">Average cruise speed (kts)</label>
                     <input type="number" id="cruise-speed" required />
