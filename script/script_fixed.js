@@ -303,7 +303,7 @@ const calculateFuel = () => {
     }
     // USG remains as gallons
 
-    document.getElementById('result').innerText = `Total Fuel Required: ${totalFuelRequired.toFixed(2)} ${unitName}\nEstimated Time A to B: ${hours} hours ${minutes} minutes\nAutonomia na decolagem: ${enduranceTakeoff}\nAutonomia no pouso: ${enduranceLanding}`;
+    document.getElementById('result').innerText = `Total Fuel Required: ${totalFuelRequired.toFixed(2)} ${unitName}\nEstimated Time A to B: ${hours} hours ${minutes} minutes\nEndurance at takeoff: ${enduranceTakeoff}\nEndurance at landing: ${enduranceLanding}`;
 };
 
 const fuelCalculatorForm = document.getElementById('fuel-calculator');
